@@ -19,7 +19,7 @@ $routes->group('produk', ['filter' => 'auth'], function ($routes) {
     $routes->post('', 'ProdukController::create');
     $routes->post('edit/(:any)', 'ProdukController::edit/$1');
     $routes->get('delete/(:any)', 'ProdukController::delete/$1');
-    $routes->get('download', 'ProdukController::dowload');
+    $routes->get('download', 'ProdukController::download');
 });
 
 $routes->group('kategori', ['filter' => 'auth'], function ($routes) {

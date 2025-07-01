@@ -21,7 +21,6 @@ if (session()->getFlashData('success')) {
             echo form_hidden('harga', $item['harga']);
             echo form_hidden('foto', $item['foto']);
             ?>
-            <?= form_close() ?>
             <div class="card">
                 <div class="card-body">
                     <img src="<?php echo base_url() . "img/" . $item['foto'] ?>" alt="..." width="300px">

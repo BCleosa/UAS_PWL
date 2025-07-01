@@ -9,24 +9,27 @@
         <th>Foto</th>
     </tr>
 
-    <?php
-    $no = 1;
-    foreach ($product as $index => $produk) :
-        $path = "../public/img/" . $produk['foto'];
-        $type = pathinfo($path, PATHINFO_EXTENSION);
-        $data = file_get_contents($path);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-
-    ?>
+    <?php foreach ($product as $index => $produk): ?>
         <tr>
-            <td align="center"><?= $index + 1 ?></td>
+            <td><?= $index + 1 ?></td>
             <td><?= $produk['nama'] ?></td>
-            <td align="right"><?= "Rp " . number_format($produk['harga'], 2, ",", ".") ?></td>
-            <td align="center"><?= $produk['jumlah'] ?></td>
-            <td align="center">
-                <img src="<?= $base64 ?>" width="50px">
+            <td><?= "Rp " . number_format($produk['harga'], 2, ',', '.') ?></td>
+            <td><?= $produk['jumlah'] ?></td>
+            <td>
+                <?php
+                    $path = FCPATH . 'img/' . $produk['foto'];
+                    if (file_exists($path)) {
+                        $type = pathinfo($path, PATHINFO_EXTENSION);
+                        $data = file_get_contents($path);
+                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        echo '<img src="' . $base64 . '" width="50px">';
+                    } else {
+                        echo 'Gambar tidak ditemukan';
+                    }
+                ?>
             </td>
         </tr>
     <?php endforeach; ?>
 </table>
-Downloaded on <?= date("Y-m-d H:i:s") ?>
+
+<p style="margin-top:20px;">Dicetak pada <?= date('d-m-Y H:i:s') ?></p>
