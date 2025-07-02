@@ -2,12 +2,14 @@
 
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
+use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\ProductModel;
 use Dompdf\Dompdf;
 
 class ProdukController extends BaseController
 {
-    protected $product; 
+    protected $product;
 
     function __construct()
     {
@@ -16,8 +18,6 @@ class ProdukController extends BaseController
 
     public function index()
     {
-        helper(['form', 'number']);
-
         $product = $this->product->findAll();
         $data['product'] = $product;
 
@@ -26,93 +26,93 @@ class ProdukController extends BaseController
 
     public function create()
     {
-    $dataFoto = $this->request->getFile('foto');
+        $dataFoto = $this->request->getFile('foto');
 
-    $dataForm = [
-        'nama' => $this->request->getPost('nama'),
-        'harga' => $this->request->getPost('harga'),
-        'jumlah' => $this->request->getPost('jumlah'),
-        'created_at' => date("Y-m-d H:i:s")
-    ];
+        $dataForm = [
+            'nama' => $this->request->getPost('nama'),
+            'harga' => $this->request->getPost('harga'),
+            'jumlah' => $this->request->getPost('jumlah'),
+            'created_at' => date("Y-m-d H:i:s")
+        ];
 
-    if ($dataFoto->isValid()) {
-        $fileName = $dataFoto->getRandomName();
-        $dataForm['foto'] = $fileName;
-        $dataFoto->move('img/', $fileName);
+        if ($dataFoto->isValid()) {
+            $fileName = $dataFoto->getRandomName();
+            $dataForm['foto'] = $fileName;
+            $dataFoto->move('img/', $fileName);
+        }
+
+        $this->product->insert($dataForm);
+
+        return redirect('produk')->with('success', 'Data Berhasil Ditambah');
     }
 
-    $this->product->insert($dataForm);
-
-    return redirect('produk')->with('success', 'Data Berhasil Ditambah');
-    } 
-
     public function edit($id)
-{
-    $dataProduk = $this->product->find($id);
+    {
+        $dataProduk = $this->product->find($id);
 
-    $dataForm = [
-        'nama' => $this->request->getPost('nama'),
-        'harga' => $this->request->getPost('harga'),
-        'jumlah' => $this->request->getPost('jumlah'),
-        'updated_at' => date("Y-m-d H:i:s")
-    ];
+        $dataForm = [
+            'nama' => $this->request->getPost('nama'),
+            'harga' => $this->request->getPost('harga'),
+            'jumlah' => $this->request->getPost('jumlah'),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
 
-    if ($this->request->getPost('check') == 1) {
+        if ($this->request->getPost('check') == 1) {
+            if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
+                unlink("img/" . $dataProduk['foto']);
+            }
+
+            $dataFoto = $this->request->getFile('foto');
+
+            if ($dataFoto->isValid()) {
+                $fileName = $dataFoto->getRandomName();
+                $dataFoto->move('img/', $fileName);
+                $dataForm['foto'] = $fileName;
+            }
+        }
+
+        $this->product->update($id, $dataForm);
+
+        return redirect('produk')->with('success', 'Data Berhasil Diubah');
+    }
+
+    public function delete($id)
+    {
+        $dataProduk = $this->product->find($id);
+
         if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
             unlink("img/" . $dataProduk['foto']);
         }
 
-        $dataFoto = $this->request->getFile('foto');
+        $this->product->delete($id);
 
-        if ($dataFoto->isValid()) {
-            $fileName = $dataFoto->getRandomName();
-            $dataFoto->move('img/', $fileName);
-            $dataForm['foto'] = $fileName;
-        }
+        return redirect('produk')->with('success', 'Data Berhasil Dihapus');
     }
 
-    $this->product->update($id, $dataForm);
+    public function download()
+    {
+        //get data from database
+        $product = $this->product->findAll();
 
-    return redirect('produk')->with('success', 'Data Berhasil Diubah');
-}
+        //pass data to file view
+        $html = view('v_produkPDF', ['product' => $product]);
 
-public function delete($id)
-{
-    $dataProduk = $this->product->find($id);
+        //set the pdf filename
+        $filename = date('y-m-d-H-i-s') . '-produk';
 
-    if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
-        unlink("img/" . $dataProduk['foto']);
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        // load HTML content (file view)
+        $dompdf->loadHtml($html);
+
+        // (optional) setup the paper size and orientation
+        $dompdf->setPaper('A4', 'potrait');
+
+        // render html as PDF
+        $dompdf->render();
+
+        // output the generated pdf
+        $dompdf->stream($filename);
     }
-
-    $this->product->delete($id);
-
-    return redirect('produk')->with('success', 'Data Berhasil Dihapus');
-}
-
-public function download()
-{
-		//get data from database
-    $product = $this->product->findAll();
-
-		//pass data to file view
-    $html = view('v_produkPDF', ['product' => $product]);
-
-		//set the pdf filename
-    $filename = date('y-m-d-H-i-s') . '-produk';
-
-    // instantiate and use the dompdf class
-    $dompdf = new Dompdf();
-
-    // load HTML content (file view)
-    $dompdf->loadHtml($html);
-
-    // (optional) setup the paper size and orientation
-    $dompdf->setPaper('A4', 'potrait');
-
-    // render html as PDF
-    $dompdf->render();
-
-    // output the generated pdf
-    $dompdf->stream($filename);
-}
 }
