@@ -32,11 +32,11 @@ $routes->group('produk', ['filter' => 'auth'], function ($routes) {
 });
 
 // CRUD Kategori Produk
-$routes->group('kategoriproduct', ['filter' => 'auth'], function ($routes) {
-    $routes->get('', 'KategoriProduct::index');
-    $routes->post('', 'KategoriProduct::create');
-    $routes->post('edit/(:any)', 'KategoriProduct::edit/$1');
-    $routes->get('delete/(:any)', 'KategoriProduct::delete/$1');
+$routes->group('kategori', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'ProductCategory::index');
+    $routes->post('', 'ProductCategory::create');
+    $routes->post('edit/(:any)', 'ProductCategory::edit/$1');
+    $routes->get('delete/(:any)', 'ProductCategory::delete/$1');
 });
 
 // Keranjang
@@ -52,6 +52,18 @@ $routes->post('buy', 'TransaksiController::buy', ['filter' => 'auth']);
 //API
 $routes->get('get-location', 'TransaksiController::getLocation', ['filter' => 'auth']);
 $routes->get('get-cost', 'TransaksiController::getCost', ['filter' => 'auth']);
+
+$routes->group('diskon', ['filter' => 'admin'], function($routes) {
+    $routes->get('/', 'DiskonController::index');
+    $routes->get('create', 'DiskonController::create');
+    $routes->post('store', 'DiskonController::store');
+    $routes->get('edit/(:num)', 'DiskonController::edit/$1');
+    $routes->post('update/(:num)', 'DiskonController::update/$1');
+    $routes->get('delete/(:num)', 'DiskonController::delete/$1');
+});
+
+
+
 
 // Untuk Login & Logout
 $routes->get('/', 'AuthController::login');

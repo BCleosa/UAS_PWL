@@ -6,14 +6,18 @@ use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
 use App\Models\UserModel;
+use App\Models\DiskonModel;
+
 
 class AuthController extends BaseController
 {
     protected $user;
+    protected $diskon;
 function __construct()
 {
     helper(['form', 'number']);
     $this->user = new UserModel();
+    $this->diskon = new DiskonModel();
 }
 public function login()
 {
@@ -31,13 +35,17 @@ public function login()
 
             if ($dataUser) {
                 if (password_verify($password, $dataUser['password'])) {
-                    session()->set([
-                        'username' => $dataUser['username'],
-                        'role' => $dataUser['role'],
-                        'isLoggedIn' => TRUE
-                    ]);
 
-                    return redirect()->to(base_url('/'));
+                    $today = date('Y-m-d');
+                    $diskonHariIni = $this->diskon->where('tanggal', date('Y-m-d'))->first();
+                    $nominalDiskon = $diskonHariIni ? $diskonHariIni['nominal'] : null;
+
+                    session()->set('username', $dataUser['username']);
+                    session()->set('role', $dataUser['role']);
+                    session()->set('isLoggedIn', TRUE);
+                    session()->set('diskon_nominal', $nominalDiskon);
+
+                    return redirect()->to(base_url('/home'));
                 } else {
                     session()->setFlashdata('failed', 'Kombinasi Username & Password Salah');
                     return redirect()->back();

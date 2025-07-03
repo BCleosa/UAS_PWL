@@ -32,20 +32,31 @@ class TransaksiController extends BaseController
     }
 
     public function cart_add()
-    {
-        if (!session()->has('isLoggedIn')) {
-            dd('Belum login, session:', session()->get());
-        }
-        $this->cart->insert(array(
-            'id'        => $this->request->getPost('id'),
-            'qty'       => 1,
-            'price'     => $this->request->getPost('harga'),
-            'name'      => $this->request->getPost('nama'),
-            'options'   => array('foto' => $this->request->getPost('foto'))
-        ));
-        session()->setflashdata('success', 'Produk berhasil ditambahkan ke keranjang. (<a href="' . base_url() . 'keranjang">Lihat</a>)');
-        return redirect()->to(base_url('/home'));
+{
+    if (!session()->has('isLoggedIn')) {
+        dd('Belum login, session:', session()->get());
     }
+
+    $diskon = session()->get('diskon_nominal') ?? 0;
+
+    $hargaAsli = $this->request->getPost('harga');
+    $hargaDiskon = max(0, $hargaAsli - $diskon);
+
+    $this->cart->insert([
+        'id'      => $this->request->getPost('id'),
+        'qty'     => 1,
+        'price'   => $hargaDiskon, 
+        'name'    => $this->request->getPost('nama'),
+        'options' => [
+            'foto'        => $this->request->getPost('foto'),
+            'harga_asli'  => $hargaAsli,
+            'diskon'      => $diskon
+        ]
+    ]);
+
+    session()->setFlashdata('success', 'Produk berhasil ditambahkan ke keranjang. (<a href="' . base_url() . 'keranjang">Lihat</a>)');
+    return redirect()->to(base_url('/home'));
+}
 
     public function cart_clear()
     {

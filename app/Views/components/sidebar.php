@@ -16,11 +16,12 @@
                 <span>Keranjang</span>
             </a>
         </li>
+
         <?php
         if (session()->get('role') == 'admin') {
         ?>
             <li class="nav-item">
-                <a class="nav-link <?php echo (uri_string() == 'kategoriproduct') ? "" : "collapsed" ?>" href="kategoriproduct">
+                <a class="nav-link <?php echo (uri_string() == 'kategori') ? "" : "collapsed" ?>" href="<?= base_url('kategori') ?>">
                     <i class="bi bi-cart-check"></i>
                     <span>Kategori Produk</span>
                 </a>
@@ -37,6 +38,15 @@
                     <span>Produk</span>
                 </a>
             </li><!-- End Produk Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo (uri_string() == 'diskon') ? "" : "collapsed" ?>" href="diskon">
+                <i class="bi bi-receipt"></i>
+                <span>Diskon</span>
+            </a>
+        </li>
+
+            
         <?php
         }
         ?>
