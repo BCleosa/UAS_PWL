@@ -12,6 +12,7 @@ History Transaksi Pembelian <strong><?= $username ?></strong>
                 <th scope="col">Waktu Pembelian</th>
                 <th scope="col">Total Bayar</th>
                 <th scope="col">Alamat</th>
+                <th scope="col">Ongkir</th>
                 <th scope="col">Status</th>
                 <th scope="col"></th>
             </tr>
@@ -27,11 +28,12 @@ History Transaksi Pembelian <strong><?= $username ?></strong>
                         <td><?php echo $item['created_at'] ?></td>
                         <td><?php echo number_to_currency($item['total_harga'], 'IDR') ?></td>
                         <td><?php echo $item['alamat'] ?></td>
-                        <td><?php echo ($item['status'] == "1") ? "Sudah Selesai" : "Belum Selesai" ?></td>
+                        <td><?= number_to_currency($item['ongkir'], 'IDR') ?></td>
+                        <td><?= ($item['status'] == "1") ? "Sudah Selesai" : "Belum Selesai" ?></td>
                         <td>
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#detailModal-<?= $item['id'] ?>">
-                                Detail
-                            </button>
+                           <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#detailModal-<?= $item['id'] ?>">
+                            Detail
+                           </button>
                         </td>
                     </tr>
                     <!-- Detail Modal Begin -->
@@ -52,6 +54,7 @@ History Transaksi Pembelian <strong><?= $username ?></strong>
                                                 <?php endif; ?>
                                                 <strong><?= $item2['nama'] ?></strong>
                                                 <?= number_to_currency($item2['harga'], 'IDR') ?>
+                                                <p>Ongkir: <?= number_to_currency($item['ongkir'], 'IDR') ?></p>
                                                 <br>
                                             <?php endforeach; ?>
                                         <?php else : ?>
