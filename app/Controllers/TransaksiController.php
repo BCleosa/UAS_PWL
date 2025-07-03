@@ -189,4 +189,23 @@ class TransaksiController extends BaseController
             return redirect()->to(base_url('/home'));
         }
     }
+
+   public function detailModal($id)
+{
+    $transaksi = $this->transaction->find($id);
+
+    // Ambil detail + join ke tabel produk
+    $details = $this->transaction_detail
+        ->select('transaction_detail.*, product.nama, product.foto, product.harga')
+        ->join('product', 'product.id = transaction_detail.product_id')
+        ->where('transaction_id', $id)
+        ->findAll();
+
+    return view('v_detail_modal', [
+        'transaksi' => $transaksi,
+        'details' => $details
+    ]);
+}
+
+
 }
