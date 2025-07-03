@@ -20,10 +20,14 @@ Proyek ini adalah platform toko online yang dibangun menggunakan [CodeIgniter 4]
 - Sistem Transaksi
   - Proses checkout
   - Riwayat transaksi
+- Diskon Harian
+  - Diskon berdasarkan tanggal
+  - Diskon otomatis pada checkout
 - Panel Admin
   - Manajemen produk (CRUD)
   - Manajemen kategori
   - Laporan transaksi
+  - Menambahkan diskon berdasarkan tanggal
   - Export data ke PDF
 - Sistem Autentikasi
   - Login/Register pengguna
@@ -70,6 +74,14 @@ Proyek ini adalah platform toko online yang dibangun menggunakan [CodeIgniter 4]
    ```
 7. **Akses aplikasi**
    Buka browser dan akses `http://localhost:8080` untuk melihat aplikasi.
+   
+9. **Login Akun Contoh**
+   - Admin: csudiati | 1234567
+   - User: janw09 | 1234567
+     
+   
+
+   
 
 ## Struktur Proyek
 
@@ -85,8 +97,11 @@ Proyek menggunakan struktur MVC CodeIgniter 4:
 - app/Views - Template dan komponen UI
   - v_produk.php - Tampilan produk
   - v_keranjang.php - Halaman keranjang
+  - v_diskon.php - Tampilan daftar diskon
 - public/img - Gambar produk dan aset
 - public/NiceAdmin - Template admin
+- public/dashboad-toko/index.php sebagai dashboard transaksi yang mengambil data dari endpoint /api menggunakan curl.
+- ApiController.php menyiapkan JSON lengkap termasuk jumlah item transaksi.
 
 When updating, check the release notes to see if there are any changes you might need to apply
 to your `app` folder. The affected files can be copied or merged from
